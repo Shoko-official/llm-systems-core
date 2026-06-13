@@ -45,6 +45,8 @@ Milestone 0 is complete when:
 
 Later milestones are placeholders until Milestone 0 is complete.
 
+Transition criteria are tracked in [Milestone Transition Gates](docs/milestone-transition-gates.md).
+
 Expected sequence:
 
 1. Core schemas and shared validation foundations.
