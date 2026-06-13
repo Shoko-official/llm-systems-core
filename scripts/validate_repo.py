@@ -61,6 +61,23 @@ REPOSITORY_PROFILE_REQUIRED_TEXT = [
     "| Status checks required |",
 ]
 
+KPI_REGISTRY_REQUIRED_TEXT = [
+    "# KPI Registry",
+    "## Conventions",
+    "## Engineering",
+    "## Research",
+    "## Paper",
+    "## RAG",
+    "## Serving",
+    "## Agents",
+    "`engineering.open_pr_count`",
+    "`research.structured_source_count`",
+    "`paper.sections_created`",
+    "`rag.recall_at_5`",
+    "`serving.ttft`",
+    "`agents.task_success_rate`",
+]
+
 
 def fail(message: str) -> None:
     raise SystemExit(message)
@@ -103,6 +120,14 @@ def validate_repository_profile() -> None:
         fail("repository profile missing required text: " + ", ".join(missing))
 
 
+def validate_kpi_registry() -> None:
+    path = ROOT / "docs" / "kpi-tracker.md"
+    text = read_text(path)
+    missing = [item for item in KPI_REGISTRY_REQUIRED_TEXT if item not in text]
+    if missing:
+        fail("KPI registry missing required text: " + ", ".join(missing))
+
+
 def lint_text() -> None:
     for path in iter_text_files():
         text = read_text(path)
@@ -115,6 +140,7 @@ def lint_text() -> None:
 def run_validate() -> None:
     validate_required_paths()
     validate_repository_profile()
+    validate_kpi_registry()
 
 
 def run_lint() -> None:
