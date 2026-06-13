@@ -18,6 +18,7 @@ REQUIRED_FILES = [
     ".github/PULL_REQUEST_TEMPLATE.md",
     ".github/workflows/ci.yml",
     "docs/kpi-tracker.md",
+    "docs/milestone-transition-gates.md",
     "docs/repository-profile.md",
     "schemas/README.md",
     "tests/README.md",
@@ -78,6 +79,17 @@ KPI_REGISTRY_REQUIRED_TEXT = [
     "`agents.task_success_rate`",
 ]
 
+MILESTONE_GATES_REQUIRED_TEXT = [
+    "# Milestone Transition Gates",
+    "## Default Rule",
+    "## Core to Research Ledger",
+    "## Research Ledger to Paper",
+    "## Evaluation Before RAG",
+    "## Policy Before Agents",
+    "## Provenance Before Memory",
+    "## Changing the Order",
+]
+
 
 def fail(message: str) -> None:
     raise SystemExit(message)
@@ -128,6 +140,14 @@ def validate_kpi_registry() -> None:
         fail("KPI registry missing required text: " + ", ".join(missing))
 
 
+def validate_milestone_transition_gates() -> None:
+    path = ROOT / "docs" / "milestone-transition-gates.md"
+    text = read_text(path)
+    missing = [item for item in MILESTONE_GATES_REQUIRED_TEXT if item not in text]
+    if missing:
+        fail("milestone transition gates missing required text: " + ", ".join(missing))
+
+
 def lint_text() -> None:
     for path in iter_text_files():
         text = read_text(path)
@@ -141,6 +161,7 @@ def run_validate() -> None:
     validate_required_paths()
     validate_repository_profile()
     validate_kpi_registry()
+    validate_milestone_transition_gates()
 
 
 def run_lint() -> None:
