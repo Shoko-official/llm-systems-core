@@ -1,0 +1,154 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ReferenceSchema",
+  "description": "Schema for reference index entries and BibTeX metadata.",
+  "type": "object",
+  "properties": {
+    "citation_key": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_\\-]+$",
+      "description": "Unique citation key for the paper."
+    },
+    "ledger_source_id": {
+      "type": "string",
+      "pattern": "^(N/A|source-[A-Za-z0-9_\\-]+)$",
+      "description": "Identifier of the source in the research ledger."
+    },
+    "ledger_claim_id": {
+      "type": "string",
+      "pattern": "^(N/A|claim-[A-Za-z0-9_\\-]+)$",
+      "description": "Identifier of the claim in the research ledger, if applicable."
+    },
+    "paper_section_target": {
+      "type": "string",
+      "pattern": "^(N/A|sections/[A-Za-z0-9_\\-]+\\.md)$",
+      "description": "Target paper section where the citation is used."
+    },
+    "readiness_state": {
+      "type": "string",
+      "enum": ["ready_for_bibliography", "missing_citation_detail", "missing_evidence", "blocked"],
+      "description": "The readiness status of the reference entry."
+    },
+    "missing_citation_detail": {
+      "type": "string",
+      "description": "Details about missing citation elements, if any."
+    },
+    "bibtex": {
+      "type": "object",
+      "description": "BibTeX fields for the reference entry.",
+      "properties": {
+        "entry_type": {
+          "type": "string",
+          "enum": [
+            "article",
+            "book",
+            "booklet",
+            "conference",
+            "inbook",
+            "inproceedings",
+            "manual",
+            "mastersthesis",
+            "misc",
+            "phdthesis",
+            "proceedings",
+            "techreport",
+            "unpublished"
+          ],
+          "description": "Type of BibTeX entry."
+        },
+        "author": {
+          "type": "string",
+          "description": "Author names."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the work."
+        },
+        "journal": {
+          "type": "string",
+          "description": "Journal name."
+        },
+        "year": {
+          "type": "string",
+          "description": "Year of publication."
+        },
+        "volume": {
+          "type": "string",
+          "description": "Volume number."
+        },
+        "number": {
+          "type": "string",
+          "description": "Issue number."
+        },
+        "pages": {
+          "type": "string",
+          "description": "Page numbers."
+        },
+        "publisher": {
+          "type": "string",
+          "description": "Publisher name."
+        },
+        "booktitle": {
+          "type": "string",
+          "description": "Title of the book/proceedings."
+        },
+        "editor": {
+          "type": "string",
+          "description": "Editor names."
+        },
+        "series": {
+          "type": "string",
+          "description": "Series name."
+        },
+        "address": {
+          "type": "string",
+          "description": "Publisher address."
+        },
+        "edition": {
+          "type": "string",
+          "description": "Edition of the book."
+        },
+        "month": {
+          "type": "string",
+          "description": "Month of publication."
+        },
+        "note": {
+          "type": "string",
+          "description": "Miscellaneous notes."
+        },
+        "key": {
+          "type": "string",
+          "description": "Sorting key."
+        },
+        "doi": {
+          "type": "string",
+          "description": "Digital Object Identifier."
+        },
+        "url": {
+          "type": "string",
+          "description": "URL to the document."
+        },
+        "eprint": {
+          "type": "string",
+          "description": "Electronic publication identifier."
+        },
+        "archiveprefix": {
+          "type": "string",
+          "description": "Repository archive prefix (e.g. arXiv)."
+        },
+        "primaryclass": {
+          "type": "string",
+          "description": "Primary subject class."
+        }
+      },
+      "required": ["entry_type", "author", "title", "year"],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "citation_key",
+    "ledger_source_id",
+    "readiness_state"
+  ],
+  "additionalProperties": false
+}
