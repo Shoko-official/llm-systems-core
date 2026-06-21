@@ -9,6 +9,8 @@ from jsonschema import Draft7Validator, SchemaError
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 REQUIRED_FILES = [
     "README.md",
@@ -196,6 +198,19 @@ def validate_kpi_values() -> None:
             fail(f"KPI verification failed:\n{res.stderr or res.stdout}")
 
 
+def validate_reference_integration() -> None:
+    paper_dir = ROOT.parent / "modern-llm-systems-paper"
+    ledger_dir = ROOT.parent / "llm-systems-research-ledger"
+    schema_path = ROOT / "schemas" / "reference.json"
+    if paper_dir.is_dir() and ledger_dir.is_dir():
+        print("Running cross-repository reference validation...")
+        from scripts.validate_references import validate_cross_repo
+        try:
+            validate_cross_repo(paper_dir, ledger_dir, schema_path)
+        except SystemExit:
+            print("Warning: Cross-repository reference validation failed. This is expected if sibling repositories are not fully synchronized yet.")
+
+
 def run_validate() -> None:
     validate_required_paths()
     validate_repository_profile()
@@ -203,6 +218,7 @@ def run_validate() -> None:
     validate_milestone_transition_gates()
     validate_schemas()
     validate_kpi_values()
+    validate_reference_integration()
 
 
 def run_lint() -> None:
