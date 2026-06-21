@@ -30,6 +30,7 @@ REQUIRED_FILES = [
     "schemas/README.md",
     "schemas/reference.json",
     "scripts/validate_references.py",
+    "scripts/schedule_kpi_update.py",
     "tests/README.md",
     "tests/test_schemas.py",
     "tests/test_validate_references.py",
@@ -198,6 +199,117 @@ def validate_kpi_values() -> None:
             fail(f"KPI verification failed:\n{res.stderr or res.stdout}")
 
 
+def check_types_compatible(t_core, t_ledger) -> bool:
+    if isinstance(t_core, str):
+        set_core = {t_core}
+    elif isinstance(t_core, list):
+        set_core = set(t_core)
+    else:
+        return True
+
+    if isinstance(t_ledger, str):
+        set_ledger = {t_ledger}
+    elif isinstance(t_ledger, list):
+        set_ledger = set(t_ledger)
+    else:
+        return True
+
+    if set_core.intersection(set_ledger):
+        return True
+    if "string" in set_core and "integer" in set_ledger:
+        return True
+    return False
+
+
+def validate_cross_repo_schemas() -> None:
+    ledger_dir = ROOT.parent / "llm-systems-research-ledger"
+    if not ledger_dir.is_dir():
+        print("Skipping cross-repository schema validation (ledger repo not found).")
+        return
+
+    print("Running cross-repository schema mismatch validation...")
+
+    core_source_path = ROOT / "schemas" / "source.json"
+    ledger_source_path = ledger_dir / "schemas" / "source.json"
+
+    core_claim_path = ROOT / "schemas" / "claim.json"
+    ledger_claim_path = ledger_dir / "schemas" / "claim.json"
+
+    core_ref_path = ROOT / "schemas" / "reference.json"
+    ledger_citation_path = ledger_dir / "schemas" / "citation.json"
+
+    source_mapping = {
+        "id": "source_id",
+        "title": "title",
+        "url": "locator",
+        "type": "evidence_class",
+        "author": "authors",
+        "published_date": "year",
+    }
+
+    claim_mapping = {
+        "id": "claim_id",
+        "claim": "claim_text",
+        "source_ids": "source_references",
+        "status": "status",
+        "notes": "review_notes",
+    }
+
+    ref_mapping = {
+        "citation_key": "citation_id",
+        "ledger_source_id": "source_id",
+        "ledger_claim_id": "claim_id",
+        "paper_section_target": "paper_section_target",
+        "readiness_state": "readiness_state",
+        "missing_citation_detail": "missing_citation_detail",
+    }
+
+    mismatches = []
+
+    def check_schema_alignment(name: str, core_path: Path, ledger_path: Path, mapping: dict[str, str]) -> None:
+        if not core_path.is_file() or not ledger_path.is_file():
+            mismatches.append(f"Missing schema file for {name}")
+            return
+
+        with open(core_path, "r", encoding="utf-8") as f:
+            core_schema = json.load(f)
+        with open(ledger_path, "r", encoding="utf-8") as f:
+            ledger_schema = json.load(f)
+
+        core_props = core_schema.get("properties", {})
+        ledger_props = ledger_schema.get("properties", {})
+        core_required = core_schema.get("required", [])
+        ledger_required = ledger_schema.get("required", [])
+
+        for p_core, p_ledger in mapping.items():
+            if p_core not in core_props:
+                continue
+            if p_ledger not in ledger_props:
+                mismatches.append(f"[{name}] Core property '{p_core}' mapped to '{p_ledger}', but '{p_ledger}' is missing from ledger schema.")
+                continue
+
+            t_core = core_props[p_core].get("type")
+            t_ledger = ledger_props[p_ledger].get("type")
+            if t_core and t_ledger:
+                if not check_types_compatible(t_core, t_ledger):
+                    mismatches.append(f"[{name}] Type mismatch for core property '{p_core}' (type: {t_core}) mapped to ledger property '{p_ledger}' (type: {t_ledger}).")
+
+            if p_core in core_required and p_ledger not in ledger_required:
+                mismatches.append(f"[{name}] Required core property '{p_core}' mapped to '{p_ledger}', but '{p_ledger}' is not required in ledger schema.")
+
+    check_schema_alignment("source.json", core_source_path, ledger_source_path, source_mapping)
+    check_schema_alignment("claim.json", core_claim_path, ledger_claim_path, claim_mapping)
+    check_schema_alignment("reference.json/citation.json", core_ref_path, ledger_citation_path, ref_mapping)
+
+    if mismatches:
+        print("Cross-repository schema mismatch validation failed with the following conflicts:", file=sys.stderr)
+        for m in mismatches:
+            print(f"  - {m}", file=sys.stderr)
+        fail("Cross-repository schema mismatch detected.")
+    else:
+        print("Cross-repository schema mismatch validation passed successfully.")
+
+
 def validate_reference_integration() -> None:
     paper_dir = ROOT.parent / "modern-llm-systems-paper"
     ledger_dir = ROOT.parent / "llm-systems-research-ledger"
@@ -218,6 +330,7 @@ def run_validate() -> None:
     validate_milestone_transition_gates()
     validate_schemas()
     validate_kpi_values()
+    validate_cross_repo_schemas()
     validate_reference_integration()
 
 
