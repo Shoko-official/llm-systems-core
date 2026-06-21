@@ -30,6 +30,7 @@ REQUIRED_FILES = [
     "scripts/validate_references.py",
     "tests/README.md",
     "tests/test_schemas.py",
+    "tests/test_validate_references.py",
 ]
 
 REQUIRED_DIRECTORIES = [
