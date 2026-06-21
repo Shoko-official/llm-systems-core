@@ -19,6 +19,9 @@ class TestSchemas(unittest.TestCase):
         with open(self.schemas_dir / "claim.json", "r", encoding="utf-8") as f:
             self.claim_schema = json.load(f)
 
+        with open(self.schemas_dir / "reference.json", "r", encoding="utf-8") as f:
+            self.reference_schema = json.load(f)
+
     def test_valid_source(self) -> None:
         valid_source = {
             "id": "SRC-001",
@@ -63,6 +66,43 @@ class TestSchemas(unittest.TestCase):
         }
         with self.assertRaises(ValidationError):
             validate(instance=invalid_claim, schema=self.claim_schema)
+
+    def test_valid_reference(self) -> None:
+        valid_ref = {
+            "citation_key": "source-attention-2017",
+            "ledger_source_id": "source-attention-2017",
+            "ledger_claim_id": "claim-attention-parallelism",
+            "paper_section_target": "sections/introduction.md",
+            "readiness_state": "ready_for_bibliography",
+            "missing_citation_detail": "None",
+            "bibtex": {
+                "entry_type": "article",
+                "author": "Vaswani et al.",
+                "title": "Attention Is All You Need",
+                "year": "2017",
+                "journal": "NeurIPS"
+            }
+        }
+        validate(instance=valid_ref, schema=self.reference_schema)
+
+    def test_invalid_reference_missing_required(self) -> None:
+        invalid_ref = {
+            "citation_key": "source-attention-2017",
+            "ledger_source_id": "source-attention-2017"
+            # readiness_state is missing
+        }
+        with self.assertRaises(ValidationError):
+            validate(instance=invalid_ref, schema=self.reference_schema)
+
+    def test_invalid_reference_extra_property(self) -> None:
+        invalid_ref = {
+            "citation_key": "source-attention-2017",
+            "ledger_source_id": "source-attention-2017",
+            "readiness_state": "ready_for_bibliography",
+            "unknown_property": "not allowed"
+        }
+        with self.assertRaises(ValidationError):
+            validate(instance=invalid_ref, schema=self.reference_schema)
 
 
 class TestKPIs(unittest.TestCase):
