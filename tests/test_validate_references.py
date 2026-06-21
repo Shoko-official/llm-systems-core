@@ -160,5 +160,43 @@ missing_citation_detail: {detail if detail is not None else 'null'}
         with self.assertRaises(SystemExit):
             validate_cross_repo(self.paper_dir, self.ledger_dir, self.schema_path)
 
+    def test_na_fields_pass(self) -> None:
+        self.write_index("""
+## Current Entries
+
+| Citation Key | Ledger Source ID | Ledger Claim ID | Paper Section Target | Readiness State | Missing Citation Detail |
+|---|---|---|---|---|---|
+| key-1 | N/A | N/A | N/A | ready_for_bibliography | None |
+""")
+        # N/A fields bypass existence checks, and since target is N/A, we don't need intro.md to cite it
+        # Should pass
+        validate_cross_repo(self.paper_dir, self.ledger_dir, self.schema_path)
+
+    def test_invalid_yaml_in_citation_fails(self) -> None:
+        self.write_index("""
+## Current Entries
+
+| Citation Key | Ledger Source ID | Ledger Claim ID | Paper Section Target | Readiness State | Missing Citation Detail |
+|---|---|---|---|---|---|
+| key-1 | source-1 | claim-1 | sections/intro.md | ready_for_bibliography | None |
+""")
+        self.write_section("intro.md", "This is a statement [@key-1].")
+        self.write_source("source-1")
+        self.write_claim("claim-1")
+        
+        # Write citation with invalid front matter (malformed yaml value)
+        (self.ledger_dir / "citations" / "cit1.md").write_text("""---
+citation_id: cit-1
+source_id: source-1
+claim_id: claim-1
+paper_section_target: "sections/intro.md"
+readiness_state: :invalid_colon
+---
+# Invalid
+""", encoding="utf-8")
+        
+        with self.assertRaises(SystemExit):
+            validate_cross_repo(self.paper_dir, self.ledger_dir, self.schema_path)
+
 if __name__ == "__main__":
     unittest.main()
