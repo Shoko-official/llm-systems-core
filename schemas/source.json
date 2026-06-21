@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SourceSchema",
+  "description": "Schema for source definitions in the research ledger.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the source."
+    },
+    "title": {
+      "type": "string",
+      "description": "Title of the source."
+    },
+    "url": {
+      "type": "string",
+      "description": "Optional URL to the source document."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["primary", "secondary", "neutral_placeholder"],
+      "description": "The category of the source."
+    },
+    "author": {
+      "type": "string",
+      "description": "Author or publisher name."
+    },
+    "published_date": {
+      "type": "string",
+      "description": "Estimated date of publication."
+    }
+  },
+  "required": ["id", "title"],
+  "additionalProperties": false
+}
