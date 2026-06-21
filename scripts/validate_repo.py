@@ -177,12 +177,26 @@ def lint_text() -> None:
                 fail(f"possible secret in {relative}: {pattern.pattern}")
 
 
+def validate_kpi_values() -> None:
+    import subprocess
+    kpi_script = ROOT / "scripts" / "check_kpis.py"
+    if kpi_script.is_file():
+        res = subprocess.run(
+            [sys.executable, str(kpi_script), "--check"],
+            capture_output=True,
+            text=True
+        )
+        if res.returncode != 0:
+            fail(f"KPI verification failed:\n{res.stderr or res.stdout}")
+
+
 def run_validate() -> None:
     validate_required_paths()
     validate_repository_profile()
     validate_kpi_registry()
     validate_milestone_transition_gates()
     validate_schemas()
+    validate_kpi_values()
 
 
 def run_lint() -> None:
