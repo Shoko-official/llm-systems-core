@@ -23,6 +23,7 @@ REQUIRED_FILES = [
     "docs/kpi-tracker.md",
     "docs/milestone-transition-gates.md",
     "docs/repository-profile.md",
+    "docs/validation-guidelines.md",
     "schemas/README.md",
     "tests/README.md",
 ]
