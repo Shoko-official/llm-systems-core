@@ -25,6 +25,7 @@ REQUIRED_FILES = [
     "docs/repository-profile.md",
     "docs/validation-guidelines.md",
     "schemas/README.md",
+    "schemas/reference.json",
     "tests/README.md",
     "tests/test_schemas.py",
 ]
@@ -155,7 +156,7 @@ def validate_milestone_transition_gates() -> None:
 
 def validate_schemas() -> None:
     schema_dir = ROOT / "schemas"
-    for schema_name in ["source.json", "claim.json"]:
+    for schema_name in ["source.json", "claim.json", "reference.json"]:
         schema_path = schema_dir / schema_name
         if not schema_path.is_file():
             fail(f"Schema file not found: {schema_name}")
