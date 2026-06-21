@@ -23,12 +23,14 @@ REQUIRED_FILES = [
     "docs/kpi-tracker.md",
     "docs/milestone-transition-gates.md",
     "docs/repository-profile.md",
+    "docs/reference-mapping-guidelines.md",
     "docs/validation-guidelines.md",
     "schemas/README.md",
     "schemas/reference.json",
     "scripts/validate_references.py",
     "tests/README.md",
     "tests/test_schemas.py",
+    "tests/test_validate_references.py",
 ]
 
 REQUIRED_DIRECTORIES = [
