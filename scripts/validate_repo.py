@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
+
+from jsonschema import Draft7Validator, SchemaError
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -148,6 +151,23 @@ def validate_milestone_transition_gates() -> None:
         fail("milestone transition gates missing required text: " + ", ".join(missing))
 
 
+def validate_schemas() -> None:
+    schema_dir = ROOT / "schemas"
+    for schema_name in ["source.json", "claim.json"]:
+        schema_path = schema_dir / schema_name
+        if not schema_path.is_file():
+            fail(f"Schema file not found: {schema_name}")
+        try:
+            with open(schema_path, "r", encoding="utf-8") as f:
+                schema_data = json.load(f)
+        except json.JSONDecodeError as e:
+            fail(f"Schema {schema_name} is not valid JSON: {e}")
+        try:
+            Draft7Validator.check_schema(schema_data)
+        except SchemaError as e:
+            fail(f"Schema {schema_name} is not a valid Draft-07 JSON schema: {e}")
+
+
 def lint_text() -> None:
     for path in iter_text_files():
         text = read_text(path)
@@ -162,6 +182,7 @@ def run_validate() -> None:
     validate_repository_profile()
     validate_kpi_registry()
     validate_milestone_transition_gates()
+    validate_schemas()
 
 
 def run_lint() -> None:
