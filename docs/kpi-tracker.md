@@ -27,18 +27,18 @@ This registry defines the program-level KPI names used across repositories. Valu
 
 | ID | KPI | Status | Value | Source | Notes |
 |---|---|---|---|---|---|
-| `research.structured_source_count` | Structured source count | future | TBD | Research ledger | Introduced after ledger schema work. |
-| `research.structured_claim_count` | Structured claim count | future | TBD | Research ledger | Introduced after ledger schema work. |
+| `research.structured_source_count` | Structured source count | future | 0 | Research ledger | Introduced after ledger schema work. |
+| `research.structured_claim_count` | Structured claim count | future | 0 | Research ledger | Introduced after ledger schema work. |
 | `research.primary_source_claim_rate` | Claims with primary source | future | TBD | Research ledger | Percentage of claims backed by primary sources. |
-| `research.evidence_needed_count` | Claims marked `TODO:evidence_needed` | future | TBD | Research ledger | Must decrease as evidence is added. |
+| `research.evidence_needed_count` | Claims marked `TODO:evidence_needed` | future | 0 | Research ledger | Must decrease as evidence is added. |
 | `research.missing_citation_count` | Missing citations | future | TBD | Research ledger and paper | Track before paper drafting expands. |
 
 ## Paper
 
 | ID | KPI | Status | Value | Source | Notes |
 |---|---|---|---|---|---|
-| `paper.sections_created` | Sections created | future | TBD | Paper repository | Count section files or paper outline entries. |
-| `paper.sections_drafted` | Sections drafted | future | TBD | Paper repository | Count sections with draft content. |
+| `paper.sections_created` | Sections created | future | 12 | Paper repository | Count section files or paper outline entries. |
+| `paper.sections_drafted` | Sections drafted | future | 0 | Paper repository | Count sections with draft content. |
 | `paper.sections_reviewed` | Sections reviewed | future | TBD | Paper repository | Count reviewed sections. |
 | `paper.figures_generated` | Figures generated | future | TBD | Paper repository | Count reproducible figures only. |
 | `paper.tables_generated` | Tables generated | future | TBD | Paper repository | Count paper-ready tables. |
