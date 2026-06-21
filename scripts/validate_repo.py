@@ -26,6 +26,7 @@ REQUIRED_FILES = [
     "docs/validation-guidelines.md",
     "schemas/README.md",
     "schemas/reference.json",
+    "scripts/validate_references.py",
     "tests/README.md",
     "tests/test_schemas.py",
 ]
