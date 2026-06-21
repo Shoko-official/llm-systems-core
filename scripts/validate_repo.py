@@ -26,6 +26,7 @@ REQUIRED_FILES = [
     "docs/validation-guidelines.md",
     "schemas/README.md",
     "tests/README.md",
+    "tests/test_schemas.py",
 ]
 
 REQUIRED_DIRECTORIES = [
@@ -204,9 +205,19 @@ def run_lint() -> None:
     lint_text()
 
 
+def run_unit_tests() -> None:
+    import unittest
+    suite = unittest.defaultTestLoader.discover(str(ROOT / "tests"), pattern="test_*.py")
+    runner = unittest.TextTestRunner(verbosity=2)
+    result = runner.run(suite)
+    if not result.wasSuccessful():
+        fail("Unit tests failed.")
+
+
 def run_test() -> None:
     run_validate()
     run_lint()
+    run_unit_tests()
 
 
 def main(argv: list[str]) -> int:
