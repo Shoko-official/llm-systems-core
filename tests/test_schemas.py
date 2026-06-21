@@ -115,3 +115,23 @@ class TestKPIs(unittest.TestCase):
             self.assertIn("id", kpi)
             self.assertIn("value", kpi)
             self.assertIn("status", kpi)
+
+
+class TestCrossRepoSchemaValidation(unittest.TestCase):
+    def test_check_types_compatible(self) -> None:
+        from scripts.validate_repo import check_types_compatible
+        self.assertTrue(check_types_compatible("string", "string"))
+        self.assertTrue(check_types_compatible("string", ["string", "null"]))
+        self.assertTrue(check_types_compatible(["string", "null"], "string"))
+        self.assertTrue(check_types_compatible("string", "integer"))
+        self.assertTrue(check_types_compatible("string", ["integer", "null"]))
+
+        self.assertFalse(check_types_compatible("boolean", "integer"))
+        self.assertFalse(check_types_compatible("array", "string"))
+
+    def test_schema_alignment_success(self) -> None:
+        from scripts.validate_repo import validate_cross_repo_schemas
+        try:
+            validate_cross_repo_schemas()
+        except SystemExit as e:
+            self.fail(f"validate_cross_repo_schemas failed unexpectedly: {e}")

@@ -58,3 +58,60 @@ To register a new program KPI:
    ```bash
    python scripts/check_kpis.py --update
    ```
+
+## Cross-Repository Schema Validation
+
+To prevent schema drift and inconsistency across repositories, the validation framework includes a cross-repository schema mismatch checker. This checker runs automatically when the sibling repository `llm-systems-research-ledger` is checked out in the parent directory.
+
+### Mapping Schema Properties
+
+The checker verifies that schemas defined in `llm-systems-core/schemas/` are structurally compatible with the implementation schemas in `llm-systems-research-ledger/schemas/`. The property mappings are:
+
+* **Source Schemas (`source.json`)**:
+  - `id` &rarr; `source_id`
+  - `title` &rarr; `title`
+  - `url` &rarr; `locator`
+  - `type` &rarr; `evidence_class`
+  - `author` &rarr; `authors`
+  - `published_date` &rarr; `year`
+
+* **Claim Schemas (`claim.json`)**:
+  - `id` &rarr; `claim_id`
+  - `claim` &rarr; `claim_text`
+  - `source_ids` &rarr; `source_references`
+  - `status` &rarr; `status`
+  - `notes` &rarr; `review_notes`
+
+* **Reference vs. Citation Schemas (`reference.json` &rarr; `citation.json`)**:
+  - `citation_key` &rarr; `citation_id`
+  - `ledger_source_id` &rarr; `source_id`
+  - `ledger_claim_id` &rarr; `claim_id`
+  - `paper_section_target` &rarr; `paper_section_target`
+  - `readiness_state` &rarr; `readiness_state`
+  - `missing_citation_detail` &rarr; `missing_citation_detail`
+
+### Compatibility Verification Rules
+
+The checker enforces the following business logic:
+1. **Property Existence**: Mapped properties defined in the core repository schemas must exist in the target ledger repository schemas.
+2. **Type Compatibility**: Mapped property types must match or be compatible (e.g. `string` is compatible with `["string", "null"]`, and `published_date` (string) is compatible with `year` (integer)).
+3. **Required Constraints**: If a property is required in the core repository schema, its mapped counterpart in the ledger repository schema must also be marked required.
+
+## Automated KPI Updater Daemon
+
+To keep the program-level metrics synchronized across files and repositories, an automated KPI updater script is provided.
+
+The updater script:
+1. Runs the KPI computation tool (`python scripts/check_kpis.py --update`).
+2. Checks if there are any modifications made to `docs/kpi-tracker.md`.
+3. If changes exist, stages them, commits with `chore: auto-update KPI tracker [skip ci]`, and pushes them to the remote repository.
+4. Pauses/sleeps for a randomized duration between 32 minutes and 2 hours to avoid burst commits, before initiating the next check.
+
+### Running the Daemon
+
+To run the KPI updater background service, use the provided Makefile target:
+
+```bash
+make schedule-kpis
+```
+
