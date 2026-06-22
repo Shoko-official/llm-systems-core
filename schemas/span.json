@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ObservabilitySpanSchema",
+  "description": "Schema for LLM systems observability tracing spans.",
+  "type": "object",
+  "properties": {
+    "span_id": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{16}$",
+      "description": "Unique 64-bit hex identifier for the span."
+    },
+    "trace_id": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{32}$",
+      "description": "Unique 128-bit hex identifier for the trace context."
+    },
+    "parent_span_id": {
+      "type": ["string", "null"],
+      "pattern": "^([a-fA-F0-9]{16}|N/A)?$",
+      "description": "Parent span identifier, or null/N/A if root span."
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the operation being traced."
+    },
+    "start_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the span started."
+    },
+    "end_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the span completed."
+    },
+    "duration_ms": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Duration of the operation in milliseconds."
+    },
+    "service_name": {
+      "type": "string",
+      "description": "Identifier of the service or component generating the span."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["unset", "ok", "error"],
+      "description": "The execution status of the operation."
+    },
+    "attributes": {
+      "type": "object",
+      "description": "Custom key-value metadata tags associated with the span.",
+      "additionalProperties": {
+        "type": ["string", "number", "boolean", "null"]
+      }
+    }
+  },
+  "required": [
+    "span_id",
+    "trace_id",
+    "name",
+    "start_time",
+    "end_time",
+    "duration_ms",
+    "service_name",
+    "status"
+  ],
+  "additionalProperties": false
+}

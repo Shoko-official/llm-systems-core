@@ -1,0 +1,16 @@
+{
+  "span_id": "8a0f2b3c4d5e6f7a",
+  "trace_id": "0123456789abcdef0123456789abcdef",
+  "parent_span_id": "N/A",
+  "name": "is_prompt_safe",
+  "start_time": "2026-06-22T17:00:00.000Z",
+  "end_time": "2026-06-22T17:00:00.125Z",
+  "duration_ms": 125.0,
+  "service_name": "security",
+  "status": "ok",
+  "attributes": {
+    "block_action": false,
+    "input_length": 45,
+    "model_id": "security-filter-v1"
+  }
+}
