@@ -15,6 +15,18 @@ def get_sibling_path(repo_name: str) -> Path:
     return ROOT.parent / repo_name
 
 
+def parse_front_matter(text: str) -> dict | None:
+    match = re.match(r"^---\s*\n(.*?)\n---\s*(?:\n|$)", text, re.DOTALL)
+    if not match:
+        return None
+    yaml_content = match.group(1)
+    import yaml
+    try:
+        return yaml.safe_load(yaml_content)
+    except Exception:
+        return None
+
+
 def compute_kpis() -> dict[str, str]:
     metrics: dict[str, str] = {}
 
@@ -26,21 +38,21 @@ def compute_kpis() -> dict[str, str]:
 
         # research.structured_source_count
         if sources_dir.is_dir():
-            source_files = list(sources_dir.glob("*.json"))
+            source_files = [f for f in sources_dir.glob("*.md") if f.name.lower() != "readme.md"]
             metrics["research.structured_source_count"] = str(len(source_files))
 
         # research.structured_claim_count & research.evidence_needed_count & research.primary_source_claim_rate
         if claims_dir.is_dir():
-            claim_files = list(claims_dir.glob("*.json"))
+            claim_files = [f for f in claims_dir.glob("*.md") if f.name.lower() != "readme.md"]
             metrics["research.structured_claim_count"] = str(len(claim_files))
 
             evidence_needed = 0
             for cf in claim_files:
                 try:
-                    with open(cf, "r", encoding="utf-8") as f:
-                        data = json.load(f)
-                        if data.get("status") == "evidence_needed":
-                            evidence_needed += 1
+                    text = cf.read_text(encoding="utf-8")
+                    data = parse_front_matter(text)
+                    if data and data.get("status") == "evidence_needed":
+                        evidence_needed += 1
                 except Exception:
                     pass
             metrics["research.evidence_needed_count"] = str(evidence_needed)
