@@ -27,13 +27,18 @@ REQUIRED_FILES = [
     "docs/repository-profile.md",
     "docs/reference-mapping-guidelines.md",
     "docs/validation-guidelines.md",
+    "docs/observability-integration-guidelines.md",
     "schemas/README.md",
     "schemas/reference.json",
+    "schemas/span.json",
     "scripts/validate_references.py",
+    "scripts/validate_spans.py",
     "scripts/schedule_kpi_update.py",
+    "examples/spans/mock_span.json",
     "tests/README.md",
     "tests/test_schemas.py",
     "tests/test_validate_references.py",
+    "tests/test_spans.py",
 ]
 
 REQUIRED_DIRECTORIES = [
@@ -162,7 +167,7 @@ def validate_milestone_transition_gates() -> None:
 
 def validate_schemas() -> None:
     schema_dir = ROOT / "schemas"
-    for schema_name in ["source.json", "claim.json", "reference.json"]:
+    for schema_name in ["source.json", "claim.json", "reference.json", "span.json"]:
         schema_path = schema_dir / schema_name
         if not schema_path.is_file():
             fail(f"Schema file not found: {schema_name}")
@@ -332,6 +337,11 @@ def run_validate() -> None:
     validate_kpi_values()
     validate_cross_repo_schemas()
     validate_reference_integration()
+    # Validate trace spans
+    import subprocess
+    res = subprocess.run([sys.executable, str(ROOT / "scripts" / "validate_spans.py")], capture_output=True, text=True)
+    if res.returncode != 0:
+        fail(f"Span validation failed:\n{res.stderr}\n{res.stdout}")
 
 
 def run_lint() -> None:
