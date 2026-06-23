@@ -37,8 +37,8 @@ This registry defines the program-level KPI names used across repositories. Valu
 
 | ID | KPI | Status | Value | Source | Notes |
 |---|---|---|---|---|---|
-| `paper.sections_created` | Sections created | future | 13 | Paper repository | Count section files or paper outline entries. |
-| `paper.sections_drafted` | Sections drafted | future | 13 | Paper repository | Count sections with draft content. |
+| `paper.sections_created` | Sections created | future | 14 | Paper repository | Count section files or paper outline entries. |
+| `paper.sections_drafted` | Sections drafted | future | 14 | Paper repository | Count sections with draft content. |
 | `paper.sections_reviewed` | Sections reviewed | future | TBD | Paper repository | Count reviewed sections. |
 | `paper.figures_generated` | Figures generated | future | TBD | Paper repository | Count reproducible figures only. |
 | `paper.tables_generated` | Tables generated | future | TBD | Paper repository | Count paper-ready tables. |
