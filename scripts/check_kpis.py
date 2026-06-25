@@ -77,6 +77,49 @@ def compute_kpis() -> dict[str, str]:
                     pass
             metrics["paper.sections_drafted"] = str(drafted)
 
+    # 3. Agent & Inference KPIs
+    infer_dir = get_sibling_path("llm-inference-benchmark")
+    if infer_dir.is_dir():
+        agent_bench_file = infer_dir / "results" / "agent_tool_call_benchmark.json"
+        if agent_bench_file.is_file():
+            try:
+                with open(agent_bench_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                agg = data.get("aggregate_metrics", {})
+                
+                # agents.planning_loop_p95
+                p95_ms = agg.get("total_latency_ms", {}).get("p95")
+                if p95_ms is not None:
+                    metrics["agents.planning_loop_p95"] = f"{p95_ms:.0f} ms"
+                    
+                # agents.tool_call_latency
+                overhead = agg.get("mean_tool_overhead_pct")
+                if overhead is not None:
+                    metrics["agents.tool_call_latency"] = f"{overhead:.2f}%"
+            except Exception:
+                pass
+
+    eval_dir = get_sibling_path("llm-evaluation-harness")
+    if eval_dir.is_dir():
+        agent_output_file = eval_dir / "evaluation" / "datasets" / "agent_mock_output.json"
+        if agent_output_file.is_file():
+            try:
+                with open(agent_output_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                results = data.get("results", [])
+                if results:
+                    successes = [1.0 if r.get("task_success") else 0.0 for r in results]
+                    tool_accuracies = [r.get("tool_call_accuracy", 0.0) for r in results]
+                    
+                    val_success = sum(successes) / len(successes)
+                    val_accuracy = sum(tool_accuracies) / len(tool_accuracies)
+                    
+                    metrics["agents.agent_success_rate"] = f"{val_success:.4f}"
+                    metrics["agents.task_success_rate"] = f"{val_success:.4f}"
+                    metrics["agents.tool_call_accuracy"] = f"{val_accuracy:.4f}"
+            except Exception:
+                pass
+
     return metrics
 
 
