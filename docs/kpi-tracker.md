@@ -27,8 +27,8 @@ This registry defines the program-level KPI names used across repositories. Valu
 
 | ID | KPI | Status | Value | Source | Notes |
 |---|---|---|---|---|---|
-| `research.structured_source_count` | Structured source count | future | 7 | Research ledger | Introduced after ledger schema work. |
-| `research.structured_claim_count` | Structured claim count | future | 10 | Research ledger | Introduced after ledger schema work. |
+| `research.structured_source_count` | Structured source count | future | 4 | Research ledger | Introduced after ledger schema work. |
+| `research.structured_claim_count` | Structured claim count | future | 4 | Research ledger | Introduced after ledger schema work. |
 | `research.primary_source_claim_rate` | Claims with primary source | future | TBD | Research ledger | Percentage of claims backed by primary sources. |
 | `research.evidence_needed_count` | Claims marked `TODO:evidence_needed` | future | 0 | Research ledger | Must decrease as evidence is added. |
 | `research.missing_citation_count` | Missing citations | future | TBD | Research ledger and paper | Track before paper drafting expands. |
