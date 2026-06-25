@@ -27,8 +27,8 @@ This registry defines the program-level KPI names used across repositories. Valu
 
 | ID | KPI | Status | Value | Source | Notes |
 |---|---|---|---|---|---|
-| `research.structured_source_count` | Structured source count | future | 4 | Research ledger | Introduced after ledger schema work. |
-| `research.structured_claim_count` | Structured claim count | future | 4 | Research ledger | Introduced after ledger schema work. |
+| `research.structured_source_count` | Structured source count | future | 13 | Research ledger | Introduced after ledger schema work. |
+| `research.structured_claim_count` | Structured claim count | future | 15 | Research ledger | Introduced after ledger schema work. |
 | `research.primary_source_claim_rate` | Claims with primary source | future | TBD | Research ledger | Percentage of claims backed by primary sources. |
 | `research.evidence_needed_count` | Claims marked `TODO:evidence_needed` | future | 0 | Research ledger | Must decrease as evidence is added. |
 | `research.missing_citation_count` | Missing citations | future | TBD | Research ledger and paper | Track before paper drafting expands. |
@@ -75,8 +75,11 @@ This registry defines the program-level KPI names used across repositories. Valu
 
 | ID | KPI | Status | Value | Source | Notes |
 |---|---|---|---|---|---|
-| `agents.task_success_rate` | Task success rate | future | TBD | Evaluation harness | Requires task dataset. |
-| `agents.tool_call_accuracy` | Tool call accuracy | future | TBD | Evaluation harness | Requires tool-call traces. |
+| `agents.agent_success_rate` | Agent success rate | active | 1.0000 | Evaluation harness | Percentage of agent tasks completed successfully. |
+| `agents.task_success_rate` | Task success rate | active | 1.0000 | Evaluation harness | Synonym for agent success rate. |
+| `agents.tool_call_accuracy` | Tool call accuracy | active | 1.0000 | Evaluation harness | F1 score of actual vs expected tool calls. |
+| `agents.tool_call_latency` | Tool call latency (overhead) | active | 9.55% | Serving benchmark | Mean percentage overhead of tool executions. |
+| `agents.planning_loop_p95` | Planning loop p95 latency | active | 18920 ms | Serving benchmark | 95th percentile planning loop latency in ms. |
 | `agents.argument_accuracy` | Argument accuracy | future | TBD | Evaluation harness | Requires argument validation. |
 | `agents.final_state_success` | Final state success | future | TBD | Evaluation harness | Requires state verifier. |
 | `agents.loop_rate` | Loop rate | future | TBD | Runtime traces | Requires trace capture. |
