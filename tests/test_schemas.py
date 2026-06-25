@@ -116,6 +116,17 @@ class TestKPIs(unittest.TestCase):
             self.assertIn("value", kpi)
             self.assertIn("status", kpi)
 
+    def test_agent_kpi_computation(self) -> None:
+        from scripts.check_kpis import compute_kpis
+        computed = compute_kpis()
+        self.assertIn("research.structured_source_count", computed)
+        self.assertIn("research.structured_claim_count", computed)
+        self.assertIn("agents.planning_loop_p95", computed)
+        self.assertIn("agents.tool_call_latency", computed)
+        self.assertIn("agents.agent_success_rate", computed)
+        self.assertIn("agents.task_success_rate", computed)
+        self.assertIn("agents.tool_call_accuracy", computed)
+
 
 class TestCrossRepoSchemaValidation(unittest.TestCase):
     def test_check_types_compatible(self) -> None:
